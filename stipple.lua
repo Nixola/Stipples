@@ -1,33 +1,20 @@
 local stipple = {}
 
+local args = {...}
+
+
+
 local dist = function(x1, y1, x2, y2) return ((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))^.5 end
 
-stipple.img = love.graphics.newImage 'stipple/stipple.png'
-stipple.img:setWrap('repeat', 'repeat')
+local imgD = love.image.newImageData(1,8)
+imgD:mapPixel(function() return 255,255,255,255 end)
 
-stipple.quads = {
-	love.graphics.newQuad(0, 0, 1, 8, 8, 8),
-	love.graphics.newQuad(1, 0, 1, 8, 8, 8),
-	love.graphics.newQuad(2, 0, 1, 8, 8, 8),
-	love.graphics.newQuad(3, 0, 1, 8, 8, 8),
-	love.graphics.newQuad(4, 0, 1, 8, 8, 8),
-	love.graphics.newQuad(5, 0, 1, 8, 8, 8),
-	love.graphics.newQuad(6, 0, 1, 8, 8, 8),
-	love.graphics.newQuad(7, 0, 1, 8, 8, 8)}
+self.img = love.graphics.newImage(imgD)
+self.img:setWrap('repeat', 'repeat')
 
-stipple.current = 1
-stipple.quad = stipple.quads[1]
+self.quad = love.graphics.newQuad(0,0,1,8,1,8)
 
-stipple.next = function(self)
-
-	self.current = self.current + 1
-	if self.current > 8 then
-		self.current = 1
-	end
-	self.quad = self.quads[self.current]
-
-end
-
+imgD = nil
 
 stipple.draw = function(self, x1, y1, x2, y2)
 
@@ -77,8 +64,19 @@ stipple.setStipple = function(self, stipple)
 			
 		end
 		
-		self.stipples[stipple] = {img = love.graphics.newImage(imgD)}
+		self.stipples[stipple] = {img = love.graphics.newImage(imgD), quad = love.graphics.newQuad(0,0,1,h,1,h)}
 		
-		--go on?
+	end
+	
+	self.img = self.stipples[stipple].img
+	self.quad = self.stipples[stipple].quad
+	
+end
+
+if tonumber(args[1]) and not args[1]:find "[23456789%.]" then
+
+	stipple:setStipple(tostring(args[1]))
+	
+end
 
 return stipple
