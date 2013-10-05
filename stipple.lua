@@ -65,6 +65,7 @@ stipple.setStipple = function(self, stipple)
 		end
 		
 		self.stipples[stipple] = {img = love.graphics.newImage(imgD), quad = love.graphics.newQuad(0,0,1,h,1,h)}
+		self.stipples[stipple].img:setWrap('repeat', 'repeat')
 		
 	end
 	
