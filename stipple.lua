@@ -9,10 +9,10 @@ local dist = function(x1, y1, x2, y2) return ((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))^.
 local imgD = love.image.newImageData(1,8)
 imgD:mapPixel(function() return 255,255,255,255 end)
 
-self.img = love.graphics.newImage(imgD)
-self.img:setWrap('repeat', 'repeat')
+stipple.img = love.graphics.newImage(imgD)
+stipple.img:setWrap('repeat', 'repeat')
 
-self.quad = love.graphics.newQuad(0,0,1,8,1,8)
+stipple.quad = love.graphics.newQuad(0,0,1,8,1,8)
 
 imgD = nil
 
@@ -36,7 +36,7 @@ stipple.stipples = {}
 
 stipple.setStipple = function(self, stipple)
 
-	if not (type(stipple) == 'number' or (type(stipple) == 'string' and tonumber(stipple)) then
+	if not (type(stipple) == 'number' or (type(stipple) == 'string' and tonumber(stipple))) then
 	
 		error("Wrong stipple type - binary string expected, got "..type(stipple))
 		
@@ -54,7 +54,7 @@ stipple.setStipple = function(self, stipple)
 	
 	if not self.stipples[stipple] then
 	
-		local imgD = love.graphics.newImageData(1, h)
+		local imgD = love.image.newImageData(1, h)
 		
 		for i = 1, h do
 		
