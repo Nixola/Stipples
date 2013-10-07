@@ -36,12 +36,8 @@ stipple.stipples = {}
 
 stipple.setStipple = function(self, stipple)
 
-	if not (type(stipple) == 'number' or (type(stipple) == 'string' and tonumber(stipple))) then
-	
-		error("Wrong stipple type - binary string expected, got "..type(stipple))
-		
-	end
-	
+	assert(type(stipple) == 'number' or (type(stipple) == 'string' and tonumber(stipple)), "Wrong stipple type - binary string expected, got "..type(stipple))
+
 	stipple = tostring(stipple)
 	
 	if stipple:find "[23456789%.]" then
@@ -71,8 +67,25 @@ stipple.setStipple = function(self, stipple)
 	
 	self.img = self.stipples[stipple].img
 	self.quad = self.stipples[stipple].quad
+	self.stipple = stipple
 	
 end
+
+
+stipple.next = function(self)
+
+	self:setStipple(self.stipple:sub(-1,-1)..self.stipple:sub(1, -2))
+
+end
+
+
+stipple.prev = function(self)
+
+	self:setStipple(self.stipple:sub(2, -1)..self.stipple:sub(1,1))
+
+end
+stipple.previous = stipple.prev
+
 
 if tonumber(args[1]) and not args[1]:find "[23456789%.]" then
 
