@@ -8,8 +8,10 @@ local lg = love.graphics
 
 lg._getLineWidth = lg._getLineWidth or lg.getLineWidth
 lg._setLineWidth = lg._setLineWidth or lg.setLineWidth
+lg._setLine = lg._setLine or lg.setLine
 function lg.getLineWidth() return lg.varlinewidth or 1 end
 function lg.setLineWidth(w) lg.varlinewidth = w; return lg._setLineWidth(w) end
+function lg.setLine(w, s) lg.varlinewidth=w; return lg._setLine(w,s) end
 
 local dist = function(x1, y1, x2, y2) return ((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))^.5 end
 
