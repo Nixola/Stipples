@@ -2,31 +2,62 @@ local stipple = {}
 
 local args = {...}
 
+local lg = love.graphics
 
+--snip to fix lg.getLineWidth, I need that >.<
+
+lg._getLineWidth = lg._getLineWidth or lg.getLineWidth
+lg._setLineWidth = lg._setLineWidth or lg.setLineWidth
+function lg.getLineWidth() return lg.varlinewidth or 1 end
+function lg.setLineWidth(w) lg.varlinewidth = w; return lg._setLineWidth(w) end
 
 local dist = function(x1, y1, x2, y2) return ((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))^.5 end
 
 local imgD = love.image.newImageData(1,8)
 imgD:mapPixel(function() return 255,255,255,255 end)
 
-stipple.img = love.graphics.newImage(imgD)
+stipple.img = lg.newImage(imgD)
 stipple.img:setWrap('repeat', 'repeat')
 
-stipple.quad = love.graphics.newQuad(0,0,1,8,1,8)
+stipple.quad = lg.newQuad(0,0,1,8,1,8)
 
 imgD = nil
 
 stipple.draw = function(self, x1, y1, x2, y2)
 
+	if type(x1) == 'table' then
+
+		local t = x1
+
+		for i=1, #t-2, 2 do
+
+			self:line(t[i], t[i+1], t[i+2], t[i+3])
+
+		end
+
+	else
+
+		self:line(x1,y1,x2,y2)
+
+	end
+
+end
+
+
+stipple.line = function(self, x1,y1,x2,y2)
+
 	local d = dist(x1,y1,x2,y2)
 
 	local v = {self.quad:getViewport()}
+
+	local lw, ls = lg.getLineWidth(), lg.getLineStyle() == 'rough' and 'nearest' or 'linear'
+	self.img:setFilter(ls, ls)
 
 	self.quad:setViewport(v[1], v[2], v[3], d)
 
 	local a = math.atan2(y2-y1, x2-x1)-math.pi/2
 
-	love.graphics.drawq(self.img, self.quad, x1, y1, a)
+	lg.drawq(self.img, self.quad, x1, y1, a, lw, 1)
 
 end
 
@@ -60,7 +91,7 @@ stipple.setStipple = function(self, stipple)
 			
 		end
 		
-		self.stipples[stipple] = {img = love.graphics.newImage(imgD), quad = love.graphics.newQuad(0,0,1,h,1,h)}
+		self.stipples[stipple] = {img = lg.newImage(imgD), quad = lg.newQuad(0,0,1,h,1,h)}
 		self.stipples[stipple].img:setWrap('repeat', 'repeat')
 		
 	end
