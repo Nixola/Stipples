@@ -6,7 +6,9 @@ local lg = love.graphics
 
 --snip to fix lg.getLineWidth, I need that >.<
 
-if not (love._version == '0.9.0') then
+local vM, vm, vr = love._version:match("(%d+)%.(%d+).(%d+)")
+
+if (vm <= 8) then --patch them!
 
 	lg._getLineWidth = lg._getLineWidth or lg.getLineWidth
 	lg._setLineWidth = lg._setLineWidth or lg.setLineWidth
@@ -49,42 +51,22 @@ stipple.draw = function(self, x1, y1, x2, y2)
 
 end
 
-if not (love._version == '0.9.0') then
-	stipple.line = function(self, x1,y1,x2,y2)
+stipple.line = function(self, x1,y1,x2,y2)
 
-		local d = dist(x1,y1,x2,y2)
+	local d = dist(x1,y1,x2,y2)
 
-		local v = {self.quad:getViewport()}
+	local v = {self.quad:getViewport()}
 
-		local lw, ls = lg.getLineWidth(), lg.getLineStyle() == 'rough' and 'nearest' or 'linear'
-		self.img:setFilter(ls, ls)
+	local lw, ls = lg.getLineWidth(), lg.getLineStyle() == 'rough' and 'nearest' or 'linear'
+	self.img:setFilter(ls, ls)
 
-		self.quad:setViewport(v[1], v[2], v[3], d)
+	self.quad:setViewport(v[1], v[2], v[3], d)
 
-		local a = math.atan2(y2-y1, x2-x1)-math.pi/2
+	local a = math.atan2(y2-y1, x2-x1)-math.pi/2
 
-		lg.drawq(self.img, self.quad, x1, y1, a, lw, 1)
+	(lg.drawq or lg.draw)(self.img, self.quad, x1, y1, a, lw, 1)
 
-	end
-else
-	stipple.line = function(self, x1,y1,x2,y2)
-
-		local d = dist(x1,y1,x2,y2)
-
-		local v = {self.quad:getViewport()}
-
-		local lw, ls = lg.getLineWidth(), lg.getLineStyle() == 'rough' and 'nearest' or 'linear'
-		self.img:setFilter(ls, ls)
-
-		self.quad:setViewport(v[1], v[2], v[3], d)
-
-		local a = math.atan2(y2-y1, x2-x1)-math.pi/2
-
-		lg.draw(self.img, self.quad, x1, y1, a, lw, 1)
-
-	end
 end
-
 
 stipple.stipples = {}
 
